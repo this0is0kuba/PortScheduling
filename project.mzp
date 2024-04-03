@@ -1,0 +1,21 @@
+{
+    "openFiles": [
+    ],
+    "openTab": -1,
+    "projectFiles": [
+        "data/ps_01_04_00.dzn",
+        "data/ps_01_04_01.dzn",
+        "data/ps_01_07_00.dzn",
+        "data/ps_01_08_00.dzn",
+        "data/ps_02_04_01.dzn",
+        "data/ps_03_08_00.dzn",
+        "data/ps_03_12_00.dzn",
+        "data/ps_04_12_00.dzn",
+        "data/ps_04_12_01.dzn",
+        "data/ps_08_24_00.dzn",
+        "portScheduling.mzn"
+    ],
+    "selectedBuiltinConfigId": "org.minizinc.mip.coin-bc",
+    "selectedBuiltinConfigVersion": "2.10.11/1.17.9",
+    "version": 106
+}
