@@ -132,8 +132,8 @@ constraint forall(s in Ship) (
 
 %%%%% Connections %%%%%
 
-constraint forall(s in Ship, t in Time) (
-  ship_status[s, t] = ((total_working_time[s, t] div reclaim_time) = ship_length[s] * ship_width[s])
+constraint forall(s in Ship, t in 0..maxtime-1) (
+  ship_status[s, t + 1] = ((total_working_time[s, t] div reclaim_time) = ship_length[s] * ship_width[s])
 );
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% OBJECTIVE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
