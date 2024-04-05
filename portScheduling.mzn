@@ -4,8 +4,6 @@ int: nsh;
 set of int: Ship = 1..nsh;
 set of int: Ship_Length = 1..max(ship_length);
 set of int: Ship_Width = 1..max(ship_width);
-array[Ship] of int: ship_width;
-array[Ship] of int: ship_length;
 array[Ship] of int: ship_size;
 array[Ship] of int: load_goods;
 
@@ -16,6 +14,8 @@ array[Ship] of Time: arrival;
 int: ship_types_number;
 set of int: Ship_Types = 1..ship_types_number;
 array[Ship_Types] of int: ship_speed;
+array[Ship_Types] of int: ship_width;
+array[Ship_Types] of int: ship_length;
 
 int: reclaim_time;
 
@@ -56,13 +56,13 @@ array[Ship, Time] of var int: total_working_time;
 
 % add constraint to prevent big ships arrive in each place at the port
 predicate enough_space_for_ship(var Ship: s) = 
-  ship_position[s] + ship_length[s] <= platform_length[which[s]];
+  ship_position[s] + ship_length[ship_size[s]] <= platform_length[which[s]];
   
 predicate not_overlape_ships(var Ship: s1, var Ship: s2) =  
     (
-      ship_position[s1] + ship_length[s1] < ship_position[s2] 
+      ship_position[s1] + ship_length[ship_size[s1]] < ship_position[s2] 
         \/ 
-      ship_position[s2] + ship_length[s2] < ship_position[s1] 
+      ship_position[s2] + ship_length[ship_size[s2]] < ship_position[s1] 
     );
 
 predicate equality_of_reclaimers(var Rail: r, var Time: t) = 
@@ -93,10 +93,12 @@ constraint forall(s in Ship) (enough_space_for_ship(s));
 
 constraint forall(
   s1, s2 in Ship
-  where s1 != s2 /\ which[s1] = which[s2] /\ start[s2] <= leaved[s1] /\ leaved[s2] >= start[s1]
+  where s1 != s2 /\ which[s1] = which[s2] /\ start[s2] < leaved[s1] /\ leaved[s2] > start[s1]
 ) (
   not_overlape_ships(s1, s2)
 );
+
+% redundant constraint
 
 % redundant constraint
 constraint forall(s in Ship, t in 0..maxtime-1 where ship_status[s, t]) (
@@ -110,7 +112,7 @@ constraint forall(r in Rail, t in Time) (
 );
 
 constraint forall(s in Ship, t in Time) (
-  used_reclaimers_by_ship[s, t] <= ship_length[s]
+  used_reclaimers_by_ship[s, t] <= ship_length[ship_size[s]]
 );
 
 constraint forall(s in Ship, t in Time where t < start[s]) (
@@ -133,7 +135,8 @@ constraint forall(s in Ship) (
 %%%%% Connections %%%%%
 
 constraint forall(s in Ship, t in 0..maxtime-1) (
-  ship_status[s, t + 1] = ((total_working_time[s, t] div reclaim_time) = ship_length[s] * ship_width[s])
+  ship_status[s, t + 1] = 
+    ((total_working_time[s, t] div reclaim_time) = ship_length[ship_size[s]] * ship_width[ship_size[s]])
 );
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% OBJECTIVE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -146,18 +149,18 @@ solve minimize obj;
 output
 ["which: ", show(which), ";\n"] ++
 ["ship_position: ", show(ship_position), ";\n"] ++
-["arrival: ", show(arrival), ";\n"] ++
-["start: ", show(start), ";\n"] ++
-["finished: ", show(finished), ";\n"] ++
-["leaved: ", show(leaved), ";\n"] ++
-["ship status: ", show([ship_status[2,t] | t in Time]), ";\n"] ++
+% ["arrival: ", show(arrival), ";\n"] ++
+% ["start: ", show(start), ";\n"] ++
+% ["finished: ", show(finished), ";\n"] ++
+% ["leaved: ", show(leaved), ";\n"] ++
+% ["ship status: ", show([ship_status[2,t] | t in Time]), ";\n"] ++
 ["obj: ", show(obj), ";\n"] ++
 
-["ship position: ", show(ship_position), ";\n"] ++ 
+% ["ship position: ", show(ship_position), ";\n"] ++ 
 
 % aux
-["free_reclaimers: ", show([free_reclaimers[1, t] | t in Time]), ";\n"] ++
-["used_reclaimers: ", show([sum([used_reclaimers_by_ship[s, t] | s in Ship where which[s] == 1]) | t in Time]), ";\n"]++
-["used_reclaimers_by_ship: ", show([used_reclaimers_by_ship[1, t] | t in Time]), ";\n"] ++
-["total_working_time: ", show([total_working_time[1, t] | t in Time]), ";\n"] ++
+% ["free_reclaimers: ", show([free_reclaimers[1, t] | t in Time]), ";\n"] ++
+% ["used_reclaimers: ", show([sum([used_reclaimers_by_ship[s, t] | s in Ship where which[s] == 1]) | t in Time]), ";\n"]++
+% ["used_reclaimers_by_ship: ", show([used_reclaimers_by_ship[1, t] | t in Time]), ";\n"] ++
+% ["total_working_time: ", show([total_working_time[1, t] | t in Time]), ";\n"] ++
 [];
