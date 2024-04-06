@@ -1,3 +1,5 @@
+include "globals.mzn"; 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% INPUT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 int: nsh;
@@ -27,6 +29,7 @@ set of int: Position_Length = 1..max(platform_length);
 array[Rail] of int: platform_length;
 array[Rail] of int: platform_time;
 array[Rail] of int: reclaimers_number;
+array[Reclaimer] of int: reclaimers_platform;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% VARIABLES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -49,6 +52,8 @@ array[Ship, Time] of var bool: ship_status;
 array[Ship, Time] of var 0..max(ship_length): used_reclaimers_by_ship;
 array[Rail, Time] of var 0..max(reclaimers_number): free_reclaimers;
 array[Ship, Time] of var int: total_working_time;
+
+array[Reclaimer, Time] of var 1..max(platform_length): reclaimers_position;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% PREDICATS AND FUNCTIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -133,6 +138,25 @@ constraint forall(s in Ship) (
    total_working_time[s, 0] = 0 
 );
 
+constraint forall(r in Rail, t in Time) (
+   alldifferent([reclaimers_position[rec, t] | rec in Reclaimer where r = reclaimers_platform[rec]])
+);
+
+constraint forall(rec in Reclaimer, t in Time) (
+  reclaimers_position[rec, t] <= platform_length[reclaimers_platform[rec]]
+);
+
+constraint forall(s in Ship, t in Time where t >= start[s] /\ t < finished[s]) (
+  used_reclaimers_by_ship[s, t] = 
+    length([
+        rec | rec in Reclaimer 
+        where 
+          reclaimers_platform[rec] = which[s] /\
+          reclaimers_position[rec, t] >= ship_position[s] /\ 
+          reclaimers_position[rec, t] <= ship_position[s] + ship_length[ship_size[s]]   
+      ])
+);
+
 %%%%% Connections %%%%%
 
 constraint forall(s in Ship, t in 0..maxtime-1) (
@@ -150,18 +174,19 @@ solve minimize obj;
 output
 ["which: ", show(which), ";\n"] ++
 ["ship_position: ", show(ship_position), ";\n"] ++
-% ["arrival: ", show(arrival), ";\n"] ++
-% ["start: ", show(start), ";\n"] ++
-% ["finished: ", show(finished), ";\n"] ++
-% ["leaved: ", show(leaved), ";\n"] ++
-% ["ship status: ", show([ship_status[2,t] | t in Time]), ";\n"] ++
+["arrival: ", show(arrival), ";\n"] ++
+["start: ", show(start), ";\n"] ++
+["finished: ", show(finished), ";\n"] ++
+["leaved: ", show(leaved), ";\n"] ++
+["ship status: ", show([ship_status[1,t] | t in Time]), ";\n"] ++
 ["obj: ", show(obj), ";\n"] ++
 
 % ["ship position: ", show(ship_position), ";\n"] ++ 
 
 % aux
+["reclaimers_position: ", show([reclaimers_position[r, 3] | r in Reclaimer where reclaimers_platform[r] = 8]), ";\n"] ++ 
 % ["free_reclaimers: ", show([free_reclaimers[1, t] | t in Time]), ";\n"] ++
 % ["used_reclaimers: ", show([sum([used_reclaimers_by_ship[s, t] | s in Ship where which[s] == 1]) | t in Time]), ";\n"]++
-% ["used_reclaimers_by_ship: ", show([used_reclaimers_by_ship[1, t] | t in Time]), ";\n"] ++
+["used_reclaimers_by_ship: ", show([used_reclaimers_by_ship[1, t] | t in Time]), ";\n"] ++
 % ["total_working_time: ", show([total_working_time[1, t] | t in Time]), ";\n"] ++
 [];
