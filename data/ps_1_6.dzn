@@ -1,9 +1,10 @@
-nsh = 4; % Number of ships
-ship_size = [2, 1, 2, 3]; % Each cell represents number of ship type
-load_goods = [false, false, false, false];
+nsh = 1; % Number of ships
 
-maxtime = 8; % Time in the day is from 0 to 'maxtime'
-arrival = [ 0, 1, 1, 2]; % At what time the ships arrival
+ship_size = [1]; % Each cell represents number of ship type
+load_goods = [false];
+
+maxtime = 6; % Time in the day is from 0 to 'maxtime'
+arrival = [1]; % At what time the ships arrival
 ship_types_number = 3; % How many types of ships is
 ship_speed = [1, 1, 1]; % How fast ship is
 ship_width = [1, 2, 2];
@@ -21,4 +22,4 @@ reclaimers_platform = [1, 1, 2, 2, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 
 
 
 % 1 unit of length -> 25m
-% 1 unit of time -> 3.5h
+% 1 unit of time -> 6min
