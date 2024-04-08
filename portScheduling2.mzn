@@ -139,6 +139,10 @@ constraint forall(s in Ship) (
 );
 
 constraint forall(r in Rail, t in Time) (
+   increasing([reclaimers_position[rec, t] | rec in Reclaimer where r = reclaimers_platform[rec]])
+);
+
+constraint forall(r in Rail, t in Time) (
    alldifferent([reclaimers_position[rec, t] | rec in Reclaimer where r = reclaimers_platform[rec]])
 );
 
@@ -148,8 +152,8 @@ constraint forall(rec in Reclaimer, t in Time) (
 
 constraint forall(s in Ship, t in Time where t >= start[s] /\ t < finished[s]) (
   used_reclaimers_by_ship[s, t] = 
-    length([
-        rec | rec in Reclaimer 
+    sum([
+        1 | rec in Reclaimer 
         where 
           reclaimers_platform[rec] = which[s] /\
           reclaimers_position[rec, t] >= ship_position[s] /\ 
@@ -178,15 +182,13 @@ output
 ["start: ", show(start), ";\n"] ++
 ["finished: ", show(finished), ";\n"] ++
 ["leaved: ", show(leaved), ";\n"] ++
-["ship status: ", show([ship_status[1,t] | t in Time]), ";\n"] ++
+% ["ship status: ", show([ship_status[1,t] | t in Time]), ";\n"] ++
 ["obj: ", show(obj), ";\n"] ++
 
-% ["ship position: ", show(ship_position), ";\n"] ++ 
-
 % aux
-["reclaimers_position: ", show([reclaimers_position[r, 3] | r in Reclaimer where reclaimers_platform[r] = 8]), ";\n"] ++ 
+% ["reclaimers_position: ", show([reclaimers_position[r, 2] | r in Reclaimer where reclaimers_platform[r] = 8]), ";\n"] ++ 
 % ["free_reclaimers: ", show([free_reclaimers[1, t] | t in Time]), ";\n"] ++
-% ["used_reclaimers: ", show([sum([used_reclaimers_by_ship[s, t] | s in Ship where which[s] == 1]) | t in Time]), ";\n"]++
-["used_reclaimers_by_ship: ", show([used_reclaimers_by_ship[1, t] | t in Time]), ";\n"] ++
+% ["used_reclaimers_by_ship: ", show([used_reclaimers_by_ship[1, t] | t in Time]), ";\n"] ++
 % ["total_working_time: ", show([total_working_time[1, t] | t in Time]), ";\n"] ++
+
 [];

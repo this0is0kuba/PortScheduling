@@ -17,6 +17,7 @@ platform_length = [14, 21, 21, 27, 27, 38, 38, 40, 14, 14, 20, 12];
 platform_time = [3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 1, 1]; % time required to arrive to the platform 
                                                      % (when ship speed is 1 - to get correct time divide time by speed
 reclaimers_number = [2, 2, 2, 3, 3, 7, 7, 10, 1, 1, 2, 1]; % amount of reclaimers at each platform
+reclaimers_platform = [1, 1, 2, 2, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 10, 11, 11, 12]
 
 
 % 1 unit of length -> 25m

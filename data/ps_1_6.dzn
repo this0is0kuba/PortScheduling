@@ -1,6 +1,6 @@
 nsh = 1; % Number of ships
 
-ship_size = [1]; % Each cell represents number of ship type
+ship_size = [3]; % Each cell represents number of ship type
 load_goods = [false];
 
 maxtime = 6; % Time in the day is from 0 to 'maxtime'
