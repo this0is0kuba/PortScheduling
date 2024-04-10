@@ -32,6 +32,15 @@ array[Rail] of int: platform_time;
 array[Rail] of int: reclaimers_number;
 array[Reclaimer] of int: reclaimers_platform;
 
+int: pns;
+set of int: Prev_Ship = 1..pns;
+array[Prev_Ship] of int: prev_ship_size;
+array[Prev_Ship] of int: prev_ship_position;
+array[Prev_Ship] of int: prev_which;
+array[Prev_Ship] of int: prev_start;
+array[Prev_Ship] of int: prev_finished;
+array[Prev_Ship] of int: prev_leaved;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% VARIABLES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -78,7 +87,7 @@ function var int: ship_time(var Ship: s) =
 
 % Earlier Ships Constraints
 
-
+% constraint forall()
 
 % Time Constraints
 
