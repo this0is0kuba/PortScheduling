@@ -1,10 +1,11 @@
 {
     "openFiles": [
+        "portSchedulingPartial.mzn",
         "portScheduling2.mzn",
-        "data/ps_20_48.dzn",
-        "data/ps_20_24.dzn"
+        "portScheduling.mzn",
+        "data/ps_6_10_partial.dzn"
     ],
-    "openTab": 1,
+    "openTab": 2,
     "projectFiles": [
         "data/ps_1_6.dzn",
         "data/ps_20_24.dzn",
@@ -12,8 +13,10 @@
         "data/ps_40_24.dzn",
         "data/ps_4_7.dzn",
         "data/ps_6_10.dzn",
+        "data/ps_6_10_partial.dzn",
         "portScheduling.mzn",
-        "portScheduling2.mzn"
+        "portScheduling2.mzn",
+        "portSchedulingPartial.mzn"
     ],
     "selectedBuiltinConfigId": "com.google.ortools.sat",
     "selectedBuiltinConfigVersion": "9.8.3296",

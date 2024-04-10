@@ -27,6 +27,7 @@ set of int: Position_Length = 1..max(platform_length);
 array[Rail] of int: platform_length;
 array[Rail] of int: platform_time;
 array[Rail] of int: reclaimers_number;
+array[Reclaimer] of int: reclaimers_platform;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% VARIABLES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -52,7 +53,6 @@ array[Ship, Time] of var int: total_working_time;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% PREDICATS AND FUNCTIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% add constraint to prevent big ships arrive in each place at the port
 predicate enough_space_for_ship(var Ship: s) = 
   ship_position[s] + ship_length[ship_size[s]] <= platform_length[which[s]];
   
@@ -142,7 +142,11 @@ constraint forall(s in Ship, t in 0..maxtime-1) (
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% OBJECTIVE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-var int: obj = sum([leaved[s] - arrival[s] | s in Ship]);
+var int: obj = 
+  sum([
+    (leaved[s] - arrival[s]) * ship_length[ship_size[s]] * ship_width[ship_size[s]] 
+  | s in Ship]);
+
 
 % solve satisfy;
 solve minimize obj;

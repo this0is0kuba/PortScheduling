@@ -76,6 +76,10 @@ function var int: ship_time(var Ship: s) =
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% CONSTRAINTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% Earlier Ships Constraints
+
+
+
 % Time Constraints
 
 constraint forall(s in Ship) (
