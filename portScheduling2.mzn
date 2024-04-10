@@ -6,6 +6,7 @@ int: nsh;
 set of int: Ship = 1..nsh;
 set of int: Ship_Length = 1..max(ship_length);
 set of int: Ship_Width = 1..max(ship_width);
+set of int: Ship_Size = 1..max(ship_size);
 array[Ship] of int: ship_size;
 array[Ship] of int: load_goods;
 
@@ -111,6 +112,11 @@ constraint forall(s in Ship, t in 0..maxtime-1 where ship_status[s, t]) (
   ship_status[s, t+1] = ship_status[s, t]
 );
 
+% redundant constraint
+constraint forall(size in Ship_Size) (
+  increasing([start[s] | s in Ship where ship_size[s] = size])
+);
+
 %%%%% Reclaimer Constraint %%%%%
 
 constraint forall(r in Rail, t in Time) (
@@ -170,7 +176,10 @@ constraint forall(s in Ship, t in 0..maxtime-1) (
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% OBJECTIVE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-var int: obj = sum([leaved[s] - arrival[s] | s in Ship]);
+var int: obj = 
+  sum([
+    (leaved[s] - arrival[s]) * ship_length[ship_size[s]] * ship_width[ship_size[s]] 
+  | s in Ship]);
 
 % solve satisfy;
 solve minimize obj;
