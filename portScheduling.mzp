@@ -1,16 +1,19 @@
 {
     "openFiles": [
-        "portSchedulingPartial.mzn"
+        "portScheduling2.mzn",
+        "data/ps_020_012.dzn"
     ],
     "openTab": 0,
     "projectFiles": [
-        "data/ps_01_06.dzn",
-        "data/ps_04_07.dzn",
-        "data/ps_06_10.dzn",
-        "data/ps_06_10_partial.dzn",
-        "data/ps_20_24.dzn",
-        "data/ps_20_48.dzn",
-        "data/ps_40_24.dzn",
+        "data/ps_001_006.dzn",
+        "data/ps_004_010.dzn",
+        "data/ps_006_012.dzn",
+        "data/ps_006_012_partial.dzn",
+        "data/ps_020_012.dzn",
+        "data/ps_020_024.dzn",
+        "data/ps_020_048.dzn",
+        "data/ps_040_024.dzn",
+        "data/ps_100_096.dzn",
         "portScheduling.mzn",
         "portScheduling2.mzn",
         "portSchedulingPartial.mzn"

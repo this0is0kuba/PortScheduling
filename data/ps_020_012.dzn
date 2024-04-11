@@ -1,9 +1,10 @@
-nsh = 6; % Number of ships
-ship_size = [2, 1, 2, 3, 3, 3]; % Each cell represents number of ship type
-load_goods = [false, false, false, false, false, false];
+nsh = 20; % Number of ships
+ship_size = [3, 1, 2, 1, 2, 1, 1, 2, 3, 1, 2, 1, 2, 3, 1, 2, 1, 2, 1, 1]; % Each cell represents number of ship type
+load_goods = [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false];
 
-maxtime = 10; % Time in the day is from 0 to 'maxtime'
-arrival = [ 1, 1, 1, 2, 2, 2]; % At what time the ships arrival
+maxtime = 12; % Time in the day is from 0 to 'maxtime'
+arrival = [0, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 5, 5, 6, 6, 6, 7, 7, 7]; 
+% At what time the ships arrival
 ship_types_number = 3; % How many types of ships is
 ship_speed = [1, 1, 1]; % How fast ship is
 ship_width = [1, 2, 2];

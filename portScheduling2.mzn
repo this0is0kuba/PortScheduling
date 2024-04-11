@@ -39,14 +39,14 @@ array[Reclaimer] of int: reclaimers_platform;
 % ship_position -> assigned location for ship
 % start -> when the ship arrives to the platform
 % finished -> when the ship will be empty
-% leaved -> when the ships start leaving the port
+% left -> when the ships start leaving the port
 % ship_status -> true if ship is empty
 
 array[Ship] of var Rail: which;
 array[Ship] of var Position_Length: ship_position; 
 array[Ship] of var Time: start; 
 array[Ship] of var Time: finished;
-array[Ship] of var Time: leaved;
+array[Ship] of var Time: left;
 
 array[Ship, Time] of var bool: ship_status;
 
@@ -87,7 +87,7 @@ constraint forall(s in Ship) (
 );
 
 constraint forall(s in Ship) (
-  leaved[s] >= finished[s]
+  left[s] >= finished[s]
 );
 
 %%%%% Ship Constraints %%%%%
@@ -96,7 +96,7 @@ constraint forall(s in Ship) (enough_space_for_ship(s));
 
 constraint forall(
   s1, s2 in Ship
-  where s1 != s2 /\ which[s1] = which[s2] /\ start[s2] < leaved[s1] /\ leaved[s2] > start[s1]
+  where s1 != s2 /\ which[s1] = which[s2] /\ start[s2] < left[s1] /\ left[s2] > start[s1]
 ) (
   not_overlape_ships(s1, s2)
 );
@@ -155,6 +155,13 @@ constraint forall(rec in Reclaimer, t in Time) (
   reclaimers_position[rec, t] <= platform_length[reclaimers_platform[rec]]
 );
 
+%%%%% Connections %%%%%
+
+constraint forall(s in Ship, t in 0..maxtime-1) (
+  ship_status[s, t + 1] = 
+    ((total_working_time[s, t] div reclaim_time) = ship_length[ship_size[s]] * ship_width[ship_size[s]])
+);
+
 constraint forall(s in Ship, t in Time where t >= start[s] /\ t < finished[s]) (
   used_reclaimers_by_ship[s, t] = 
     sum([
@@ -166,18 +173,11 @@ constraint forall(s in Ship, t in Time where t >= start[s] /\ t < finished[s]) (
       ])
 );
 
-%%%%% Connections %%%%%
-
-constraint forall(s in Ship, t in 0..maxtime-1) (
-  ship_status[s, t + 1] = 
-    ((total_working_time[s, t] div reclaim_time) = ship_length[ship_size[s]] * ship_width[ship_size[s]])
-);
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% OBJECTIVE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 var int: obj = 
   sum([
-    (leaved[s] - arrival[s]) * ship_length[ship_size[s]] * ship_width[ship_size[s]] 
+    (left[s] - arrival[s]) * ship_length[ship_size[s]] * ship_width[ship_size[s]] 
   | s in Ship]);
 
 % solve satisfy;
@@ -188,15 +188,15 @@ output
 ["ship_position: ", show(ship_position), ";\n"] ++
 ["arrival: ", show(arrival), ";\n"] ++
 ["start: ", show(start), ";\n"] ++
-["finished: ", show(finished), ";\n"] ++
-["leaved: ", show(leaved), ";\n"] ++
+% ["finished: ", show(finished), ";\n"] ++
+% ["left: ", show(left), ";\n"] ++
 % ["ship status: ", show([ship_status[1,t] | t in Time]), ";\n"] ++
 ["obj: ", show(obj), ";\n"] ++
 
 % aux
-% ["reclaimers_position: ", show([reclaimers_position[r, 2] | r in Reclaimer where reclaimers_platform[r] = 8]), ";\n"] ++ 
+% ["reclaimers_position: ", show([reclaimers_position[r, 2] | r in Reclaimer where reclaimers_platform[r] = which[2]]), ";\n"] ++ 
 % ["free_reclaimers: ", show([free_reclaimers[1, t] | t in Time]), ";\n"] ++
-% ["used_reclaimers_by_ship: ", show([used_reclaimers_by_ship[1, t] | t in Time]), ";\n"] ++
-% ["total_working_time: ", show([total_working_time[1, t] | t in Time]), ";\n"] ++
+% ["used_reclaimers_by_ship: ", show([used_reclaimers_by_ship[2, t] | t in Time]), ";\n"] ++
+% ["total_working_time: ", show([total_working_time[2, t] | t in Time]), ";\n"] ++
 
 [];

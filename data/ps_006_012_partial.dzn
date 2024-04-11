@@ -2,7 +2,7 @@ nsh = 6; % Number of ships
 ship_size = [2, 1, 2, 3, 3, 3]; % Each cell represents number of ship type
 load_goods = [false, false, false, false, false, false];
 
-maxtime = 10; % Time in the day is from 0 to 'maxtime'
+maxtime = 15; % Time in the day is from 0 to 'maxtime'
 arrival = [ 1, 1, 1, 2, 2, 2]; % At what time the ships arrival
 ship_types_number = 3; % How many types of ships is
 ship_speed = [1, 1, 1]; % How fast ship is
