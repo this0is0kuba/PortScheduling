@@ -3,7 +3,7 @@ from datetime import timedelta
 
 class PartialAlgorithm:
 
-    def __init__(self, ship_size: list[int], arrival: list[int]):
+    def __init__(self, ship_size: list[int], arrival: list[int], maxtime: int):
 
         self.nsh = len(ship_size)
         self.ship_size = ship_size
@@ -12,7 +12,7 @@ class PartialAlgorithm:
         for i in range(self.nsh):
             self.load_goods.append(False)
 
-        self.maxtime = len(arrival) - 1
+        self.maxtime = maxtime
         self.arrival = arrival
 
         self.ship_types_number = 3
@@ -30,9 +30,9 @@ class PartialAlgorithm:
         self.reclaimers_platform = [1, 1, 2, 2, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 7, 7,
                                     7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 10, 11, 11, 12]
 
-    def buildModel(self):
+    def solve(self):
 
-        model = Model("./portScheduling2.mzn")
+        model = Model("../portScheduling2.mzn")
         solver = Solver.lookup("ortools")
         instance = Instance(solver, model)
 
@@ -56,7 +56,6 @@ class PartialAlgorithm:
         max_time = timedelta(seconds=60)
         result = instance.solve(timeout=max_time, processes=8)
         
-        return result['obj']
+        return {"obj": result['obj'], "start": result['start']}
 
-        
     
