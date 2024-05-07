@@ -7,7 +7,7 @@ maxtime = 12
 generator = Generator(number_of_ships, maxtime)
 ship_size, arrival = generator.generate()
 
-partial = PartialAlgorithm(ship_size, arrival, maxtime)
+partial = PartialAlgorithm(ship_size, arrival, maxtime, 5)
 solution = partial.solve()
 
 print(solution)

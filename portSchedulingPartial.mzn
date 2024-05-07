@@ -32,14 +32,19 @@ array[Rail] of int: platform_time;
 array[Rail] of int: reclaimers_number;
 array[Reclaimer] of int: reclaimers_platform;
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%% INPUTS (earleir ship information) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 int: pns;
+int: max_earlier_time;
 set of int: Prev_Ship = 1..pns;
-array[Prev_Ship] of int: prev_ship_size;
-array[Prev_Ship] of int: prev_ship_position;
-array[Prev_Ship] of int: prev_which;
-array[Prev_Ship] of int: prev_start;
-array[Prev_Ship] of int: prev_finished;
-array[Prev_Ship] of int: prev_leaved;
+set of int: Partial_Time = 0..max_earlier_time;
+
+array[Prev_Ship] of Ship_Size: prev_ship_size;
+array[Prev_Ship] of Rail: prev_which;
+array[Prev_Ship] of Position_Length: prev_ship_position;
+array[Prev_Ship] of Partial_Time: prev_start;
+array[Prev_Ship] of Partial_Time: prev_leaved;
+array[Reclaimer, Partial_Time] of var 1..max(platform_length): prev_reclaimers_position;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% VARIABLES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -85,9 +90,28 @@ function var int: ship_time(var Ship: s) =
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% CONSTRAINTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Earlier Ships Constraints
+% Earlier Ships Constraints (required for 'partial' solution)
 
-% constraint forall()
+constraint forall(
+  s1 in Ship, s2 in Prev_Ship
+  where which[s1] = prev_which[s2] /\ prev_start[s2] < leaved[s1] /\ prev_leaved[s2] > start[s1]
+) (
+  not_overlape_ships(s1, s2)
+);
+
+constraint forall(rec in Reclaimer) (
+  reclaimers_position[rec, 0] = prev_reclaimers_position[r, 0]
+);
+
+constraint forall(s in Prev_Ship, t in Time, rec in Reclaimer where t >= start[s] /\ t < finished[s] /\
+                  prev_reclaimers_platform[rec] = prev_which[s] /\
+                  prev_reclaimers_position[rec, t] >= prev_ship_position[s] /\ 
+                  prev_reclaimers_position[rec, t] <= prev_ship_position[s] + prev_ship_length[prev_ship_size[s]]
+) (
+  reclaimers_position[r, t] = prev_reclaimers_position[rec, t]
+);
+
+
 
 % Time Constraints
 
@@ -201,8 +225,8 @@ output
 ["ship_position: ", show(ship_position), ";\n"] ++
 ["arrival: ", show(arrival), ";\n"] ++
 ["start: ", show(start), ";\n"] ++
-["finished: ", show(finished), ";\n"] ++
-["leaved: ", show(leaved), ";\n"] ++
+% ["finished: ", show(finished), ";\n"] ++
+% ["leaved: ", show(leaved), ";\n"] ++
 % ["ship status: ", show([ship_status[1,t] | t in Time]), ";\n"] ++
 ["obj: ", show(obj), ";\n"] ++
 

@@ -47,7 +47,6 @@ def generator(ships_number: int, maxtime: int):
     
     print("]", end="")
 
-generator(20, 12)
 
     
 

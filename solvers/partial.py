@@ -3,7 +3,7 @@ from datetime import timedelta
 
 class PartialAlgorithm:
 
-    def __init__(self, ship_size: list[int], arrival: list[int], maxtime: int):
+    def __init__(self, ship_size: list[int], arrival: list[int], maxtime: int, number_of_parts: int):
 
         self.nsh = len(ship_size)
         self.ship_size = ship_size
@@ -14,6 +14,7 @@ class PartialAlgorithm:
 
         self.maxtime = maxtime
         self.arrival = arrival
+        self.number_of_parts = number_of_parts
 
         self.ship_types_number = 3
         self.ship_speed = [1, 1, 1]
@@ -32,7 +33,7 @@ class PartialAlgorithm:
 
     def solve(self):
 
-        model = Model("portScheduling2.mzn")
+        model = Model("portSchedulingPartial.mzn")
         solver = Solver.lookup("com.google.ortools.sat")
         instance = Instance(solver, model)
 
