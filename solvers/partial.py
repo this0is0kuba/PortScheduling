@@ -32,8 +32,8 @@ class PartialAlgorithm:
 
     def solve(self):
 
-        model = Model("../portScheduling2.mzn")
-        solver = Solver.lookup("ortools")
+        model = Model("portScheduling2.mzn")
+        solver = Solver.lookup("com.google.ortools.sat")
         instance = Instance(solver, model)
 
         instance["nsh"] = self.nsh
@@ -49,13 +49,18 @@ class PartialAlgorithm:
         instance["nr"] = self.nr
         instance["nre"] = self.nre
         instance["platform_length"] = self.platform_length
-        instance["platfrom_time"] = self.platform_time
+        instance["platform_time"] = self.platform_time
         instance["reclaimers_number"] = self.reclaimers_number
         instance["reclaimers_platform"] = self.reclaimers_platform
 
         max_time = timedelta(seconds=60)
         result = instance.solve(timeout=max_time, processes=8)
         
-        return {"obj": result['obj'], "start": result['start']}
+        return {
+            "start": result["start"],
+            "which": result["which"],
+            "ship_position": result["ship_position"],
+            "obj": result["objective"]
+        }
 
     

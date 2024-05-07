@@ -15,7 +15,7 @@ class Generator:
 
         ship_info = []
 
-        for i in range(self.ships_number):
+        for _ in range(self.ships_number):
 
             p = random.random()
             arrivalTime = random.randint(0, self.maxtime-5)
@@ -32,4 +32,7 @@ class Generator:
 
         ship_info.sort(key= lambda info: info[1])
 
-        return (ship_info[:][0], ship_info[:][1])  # [ship_size, arrival]
+        ship_size = [t[0] for t in ship_info]
+        arrival = [t[1] for t in ship_info]
+
+        return (ship_size, arrival)  # [ship_size, arrival]
