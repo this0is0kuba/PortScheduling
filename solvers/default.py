@@ -9,7 +9,7 @@ class Default:
         self.ship_size = ship_size
 
         self.load_goods = []
-        for i in range(self.nsh):
+        for _ in range(self.nsh):
             self.load_goods.append(False)
 
         self.maxtime = maxtime

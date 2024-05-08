@@ -2,10 +2,11 @@ import random
 
 class Generator:
 
-    def __init__(self, ships_number: int, maxtime: int) -> None:
+    def __init__(self, ships_number: int, maxtime: int, additional_time: int) -> None:
         
         self.ships_number = ships_number
         self.maxtime = maxtime
+        self.additional_time = additional_time
 
     def generate(self):
         
@@ -18,7 +19,7 @@ class Generator:
         for _ in range(self.ships_number):
 
             p = random.random()
-            arrivalTime = random.randint(0, self.maxtime-5)
+            arrivalTime = random.randint(0, self.maxtime-self.additional_time)
 
             if p < p_small:
                 ship_info.append((1, arrivalTime))
