@@ -6,7 +6,7 @@ int: nsh;
 set of int: Ship = 1..nsh;
 set of int: Ship_Length = 1..max(ship_length);
 set of int: Ship_Width = 1..max(ship_width);
-set of int: Ship_Size = 1..max(ship_size);
+set of int: Ship_Size = 1..3;
 array[Ship] of int: ship_size;
 array[Ship] of int: load_goods;
 
@@ -43,7 +43,7 @@ array[Prev_Ship] of Ship_Size: prev_ship_size;
 array[Prev_Ship] of Rail: prev_which;
 array[Prev_Ship] of Position_Length: prev_ship_position;
 array[Prev_Ship] of Partial_Time: prev_start;
-array[Prev_Ship] of Partial_Time: prev_leaved;
+array[Prev_Ship] of Partial_Time: prev_left;
 array[Reclaimer, Partial_Time] of var 1..max(platform_length): prev_reclaimers_position;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% VARIABLES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -53,14 +53,14 @@ array[Reclaimer, Partial_Time] of var 1..max(platform_length): prev_reclaimers_p
 % ship_position -> assigned location for ship
 % start -> when the ship arrives to the platform
 % finished -> when the ship will be empty
-% leaved -> when the ships start leaving the port
+% left -> when the ships start leaving the port
 % ship_status -> true if ship is empty
 
 array[Ship] of var Rail: which;
 array[Ship] of var Position_Length: ship_position; 
 array[Ship] of var Time: start; 
 array[Ship] of var Time: finished;
-array[Ship] of var Time: leaved;
+array[Ship] of var Time: left;
 
 array[Ship, Time] of var bool: ship_status;
 
@@ -81,6 +81,13 @@ predicate not_overlape_ships(var Ship: s1, var Ship: s2) =
         \/ 
       ship_position[s2] + ship_length[ship_size[s2]] < ship_position[s1] 
     );
+    
+predicate not_overlape_ships_2(var Ship: s1, var Prev_Ship: s2) =  
+    (
+      ship_position[s1] + ship_length[ship_size[s1]] < prev_ship_position[s2] 
+        \/ 
+      prev_ship_position[s2] + ship_length[prev_ship_size[s2]] < ship_position[s1] 
+    );
 
 predicate equality_of_reclaimers(var Rail: r, var Time: t) = 
   free_reclaimers[r, t] = reclaimers_number[r] - sum([used_reclaimers_by_ship[s, t] | s in Ship where which[s] = r]);
@@ -94,21 +101,21 @@ function var int: ship_time(var Ship: s) =
 
 constraint forall(
   s1 in Ship, s2 in Prev_Ship
-  where which[s1] = prev_which[s2] /\ prev_start[s2] < leaved[s1] /\ prev_leaved[s2] > start[s1]
+  where which[s1] = prev_which[s2] /\ prev_start[s2] < left[s1] /\ prev_left[s2] > start[s1]
 ) (
-  not_overlape_ships(s1, s2)
+  not_overlape_ships_2(s1, s2)
 );
 
 constraint forall(rec in Reclaimer) (
-  reclaimers_position[rec, 0] = prev_reclaimers_position[r, 0]
+  reclaimers_position[rec, 0] = prev_reclaimers_position[rec, 0]
 );
 
-constraint forall(s in Prev_Ship, t in Time, rec in Reclaimer where t >= start[s] /\ t < finished[s] /\
-                  prev_reclaimers_platform[rec] = prev_which[s] /\
+constraint forall(s in Prev_Ship, t in Partial_Time, rec in Reclaimer where t >= prev_start[s] /\ t < prev_left[s] /\
+                  reclaimers_platform[rec] = prev_which[s] /\
                   prev_reclaimers_position[rec, t] >= prev_ship_position[s] /\ 
-                  prev_reclaimers_position[rec, t] <= prev_ship_position[s] + prev_ship_length[prev_ship_size[s]]
+                  prev_reclaimers_position[rec, t] <= prev_ship_position[s] + ship_length[prev_ship_size[s]]
 ) (
-  reclaimers_position[r, t] = prev_reclaimers_position[rec, t]
+  reclaimers_position[rec, t] = prev_reclaimers_position[rec, t]
 );
 
 
@@ -124,7 +131,7 @@ constraint forall(s in Ship) (
 );
 
 constraint forall(s in Ship) (
-  leaved[s] >= finished[s]
+  left[s] >= finished[s]
 );
 
 %%%%% Ship Constraints %%%%%
@@ -133,7 +140,7 @@ constraint forall(s in Ship) (enough_space_for_ship(s));
 
 constraint forall(
   s1, s2 in Ship
-  where s1 != s2 /\ which[s1] = which[s2] /\ start[s2] < leaved[s1] /\ leaved[s2] > start[s1]
+  where s1 != s2 /\ which[s1] = which[s2] /\ start[s2] < left[s1] /\ left[s2] > start[s1]
 ) (
   not_overlape_ships(s1, s2)
 );
@@ -214,7 +221,7 @@ constraint forall(s in Ship, t in 0..maxtime-1) (
 
 var int: obj = 
   sum([
-    (leaved[s] - arrival[s]) * ship_length[ship_size[s]] * ship_width[ship_size[s]] 
+    (left[s] - arrival[s]) * ship_length[ship_size[s]] * ship_width[ship_size[s]] 
   | s in Ship]);
 
 % solve satisfy;
@@ -226,7 +233,7 @@ output
 ["arrival: ", show(arrival), ";\n"] ++
 ["start: ", show(start), ";\n"] ++
 % ["finished: ", show(finished), ";\n"] ++
-% ["leaved: ", show(leaved), ";\n"] ++
+% ["left: ", show(left), ";\n"] ++
 % ["ship status: ", show([ship_status[1,t] | t in Time]), ";\n"] ++
 ["obj: ", show(obj), ";\n"] ++
 

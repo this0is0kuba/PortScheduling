@@ -1,9 +1,10 @@
 {
     "openFiles": [
         "portScheduling2.mzn",
-        "portSchedulingPartial.mzn"
+        "portSchedulingPartial.mzn",
+        "data/test.dzn"
     ],
-    "openTab": 1,
+    "openTab": 0,
     "projectFiles": [
         "data/ps_001_006.dzn",
         "data/ps_004_010.dzn",
@@ -13,6 +14,7 @@
         "data/ps_020_048.dzn",
         "data/ps_040_024.dzn",
         "data/ps_100_096.dzn",
+        "data/test.dzn",
         "portScheduling.mzn",
         "portScheduling2.mzn",
         "portSchedulingPartial.mzn"

@@ -189,7 +189,7 @@ output
 ["arrival: ", show(arrival), ";\n"] ++
 ["start: ", show(start), ";\n"] ++
 % ["finished: ", show(finished), ";\n"] ++
-% ["left: ", show(left), ";\n"] ++
+["left: ", show(left), ";\n"] ++
 % ["ship status: ", show([ship_status[1,t] | t in Time]), ";\n"] ++
 ["obj: ", show(obj), ";\n"] ++
 
