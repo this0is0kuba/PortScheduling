@@ -22,12 +22,12 @@ class PartialAlgorithm:
         self.ship_width = [1, 2, 2]
         self.ship_length = [5, 10, 15]
 
-        self.reclaim_time = 1
+        self.reclaim_time = 2
 
         self.nr = 12
         self.nre = 41
         self.platform_length = [14, 21, 21, 27, 27, 38, 38, 40, 14, 14, 20, 12]
-        self.platform_time = [3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 1, 1]
+        self.platform_time = [2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1]
         self.reclaimers_number = [2, 2, 2, 3, 3, 7, 7, 10, 1, 1, 2, 1]
         self.reclaimers_platform = [1, 1, 2, 2, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 7, 7,
                                     7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 10, 11, 11, 12]
