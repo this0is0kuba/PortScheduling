@@ -32,6 +32,21 @@ array[Rail] of int: platform_time;
 array[Rail] of int: reclaimers_number;
 array[Reclaimer] of int: reclaimers_platform;
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%% INPUTS (earleir ship information) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+int: pns;
+int: max_earlier_time;
+set of int: Prev_Ship = 1..pns;
+set of int: Partial_Time = 0..max_earlier_time;
+
+array[Prev_Ship] of Ship_Size: prev_ship_size;
+array[Prev_Ship] of Rail: prev_which;
+array[Prev_Ship] of Position_Length: prev_ship_position;
+array[Prev_Ship] of Partial_Time: prev_start;
+array[Prev_Ship] of Partial_Time: prev_left;
+
+array[Prev_Ship, 0..max_earlier_time-1] of var 0..15: prev_used_reclaimers_by_ship;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% VARIABLES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -65,19 +80,40 @@ predicate not_overlape_ships(var Ship: s1, var Ship: s2) =
         \/ 
       ship_position[s2] + ship_length[ship_size[s2]] < ship_position[s1] 
     );
+    
+predicate not_overlape_ships_2(var Ship: s1, var Prev_Ship: s2) =  
+    (
+      ship_position[s1] + ship_length[ship_size[s1]] < prev_ship_position[s2] 
+        \/ 
+      prev_ship_position[s2] + ship_length[prev_ship_size[s2]] < ship_position[s1] 
+    );
 
 predicate equality_of_reclaimers(var Rail: r, var Time: t) = 
-  free_reclaimers[r, t] = reclaimers_number[r] - sum([used_reclaimers_by_ship[s, t] | s in Ship where which[s] = r]);
+  free_reclaimers[r, t] = 
+          (
+            reclaimers_number[r] 
+            - sum([used_reclaimers_by_ship[s, t] | s in Ship where which[s] = r])
+            - sum([prev_used_reclaimers_by_ship[s, t] | s in Prev_Ship where t < max_earlier_time /\ prev_which[s] = r])
+          );
 
 function var int: ship_time(var Ship: s) =
   platform_time[which[s]] div ship_speed[ship_size[s]];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% CONSTRAINTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% Earlier Ships Constraints (required for 'partial' solution)
+
+constraint forall(
+  s1 in Ship, s2 in Prev_Ship
+  where which[s1] = prev_which[s2] /\ prev_start[s2] < left[s1] /\ prev_left[s2] > start[s1]
+) (
+  not_overlape_ships_2(s1, s2)
+);
+
 % Time Constraints
 
 constraint forall(s in Ship) (
-  start[s] >= arrival[s] + ship_time(s)
+  start[s] >= arrival[s] %+ ship_time(s)
 );
 
 constraint forall(s in Ship) (
